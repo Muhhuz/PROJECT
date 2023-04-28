@@ -1,0 +1,135 @@
+import 'dart:io';
+
+void main() {
+  Map<String, dynamic> user = {};
+  while (true) {
+    print('Welcome to the food ordering system!');
+    print('');
+    print('1. Create account');
+    print('2. Login');
+    print('3. Change password');
+    print('4. Exit');
+    print('Enter your choice: ');
+    String choice = stdin.readLineSync()!;
+    switch (choice) {
+      case '1':
+        createAccount(user);
+        break;
+      case '2':
+        login(user);
+        break;
+      case '3':
+        editPswrd(user);
+        break;
+      case '4':
+        exit(0);
+
+      default:
+        print('Invalid choice. Please try again.');
+    }
+  }
+}
+
+void createAccount(Map<String, dynamic> user) {
+  print('Enter your username: ');
+  String username = stdin.readLineSync()!;
+  if (user.containsKey(username)) {
+    print('Username already exists. Please choose another one.');
+    return;
+  }
+  print('Enter your password: ');
+  String password = stdin.readLineSync()!;
+  user[username] = {'password': password};
+  print('Account created successfully. Please login to continue.');
+}
+
+void editPswrd(Map<String, dynamic> user) {
+  print('Enter your username: ');
+  String username = stdin.readLineSync()!;
+  if (!user.containsKey(username)) {
+    print('Username not found. Please try again.');
+    return;
+  }
+  print('Enter your password: ');
+  String password = stdin.readLineSync()!;
+  if (user[username]['password'] != password) {
+    print('Invalid password. Please try again.');
+    return;
+  }
+  print('Login successful. Welcome back, $username!');
+  print('Enter new password: ');
+  String newPswrd = stdin.readLineSync()!;
+  user[username] = {'password': newPswrd};
+  print('Password changed successfully.');
+}
+
+void login(Map<String, dynamic> user) {
+  print('Enter your username: ');
+  String username = stdin.readLineSync()!;
+  if (!user.containsKey(username)) {
+    print('Username not found. Please try again.');
+    return;
+  }
+  print('Enter your password: ');
+  String password = stdin.readLineSync()!;
+  if (user[username]['password'] != password) {
+    print('Invalid password. Please try again.');
+    return;
+  }
+  print('Login successful. Welcome back, $username!');
+  orderFood(username);
+}
+
+void orderFood(String username) {
+  List<String> menu = [
+    '1. Haleem Beef  - \$5.99',
+    '2. Mutton Kunna Paya - \$8.99',
+    '3. Chicken Biryani  - \$6.99',
+    '4. Palak Paneer - \$9.99',
+    '5. Mutton Karahi - \$1.99',
+    '6. Shahi Shami Kababs - \$3.99',
+    '7. Chargha Batair - \$4.99',
+    '8. Bun Kabab With Fries - \$2.99',
+  ];
+  List<String> order = [];
+  double total = 0.0;
+  while (true) {
+    print('\nMENU DESI RESTAURANT');
+    for (String item in menu) {
+      print(item);
+    }
+    print('0. Done ordering');
+    print('Enter your choice: ');
+    String choice = stdin.readLineSync()!;
+    if (choice == '0') {
+      if (order.isEmpty) {
+        print('You did not order anything.');
+        return;
+      }
+      print('\nORDER');
+      for (String item in order) {
+        print(item);
+      }
+      print('Total: \$${total.toStringAsFixed(2)}');
+      print('Thank you for your order, $username!');
+      return;
+    }
+    try {
+      int itemNum = int.parse(choice);
+      if (itemNum < 1 || itemNum > menu.length) {
+        throw FormatException();
+      }
+      String item = menu[itemNum - 1];
+      order.add(item);
+      double price = double.parse(item.split(' - \$')[1]);
+      total += price;
+      print('\nYour order so far:');
+      for (String item in order) {
+        print(item);
+      }
+      print('Total: \$${total.toStringAsFixed(2)}');
+    } catch (e) {
+      print('Invalid choice. Please try again.');
+    }
+  }
+}
